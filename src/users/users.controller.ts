@@ -17,7 +17,7 @@ export class UsersController {
    * @param createUserDto The data to be created
    * @returns JSON response 
    */
-  @Patch(':id')
+  
   @ApiParam({
     name: "id",
     type: "number",
@@ -70,7 +70,7 @@ export class UsersController {
    * @param updateUserDto The data to modify
    * @returns JSON response 
    */
-  @Patch(':id')
+  
   @ApiParam({
     name: "id",
     type: "number",
