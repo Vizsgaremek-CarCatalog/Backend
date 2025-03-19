@@ -20,6 +20,7 @@ model cars{
   fuel String
   manufacturer String
   mass Int
+  imageUrl String?
   
 }
 model User {

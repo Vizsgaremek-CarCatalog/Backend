@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
    /**
     * The data required to create a new car
@@ -44,7 +44,10 @@ export class CreateCarcatalogDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
-        example: "1500"
+        example: 1500
     })
     mass:number
+
+    @IsOptional()
+    imageUrl?: string
 }

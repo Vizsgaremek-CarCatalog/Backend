@@ -1,13 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { CarcatalogService } from './carcatalog.service';
 import { CreateCarcatalogDto } from './dto/create-carcatalog.dto';
 import { UpdateCarcatalogDto } from './dto/update-carcatalog.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('carcatalog')
 @ApiBearerAuth()
 export class CarcatalogController {
   constructor(private readonly carcatalogService: CarcatalogService) {}
+
+  private static storage = diskStorage({
+    destination: './uploads',
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, uniqueSuffix + extname(file.originalname));
+    },
+  });
+
 
    /**
    * Creates a new user
@@ -16,17 +28,23 @@ export class CarcatalogController {
    * @param createcarcatalogDto The data to be created
    * @returns JSON response 
    */
-   @Patch(':id')
+   
+   @Post()
    @ApiParam({
      name: "id",
      type: "number",
      description: 'The unique ID of the user'
    })
+   @UseInterceptors(FileInterceptor('image', { storage: CarcatalogController.storage }))
    @ApiResponse({ status: 200, description: 'Car created successfully' })
    @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
-   @Post()
-   create(@Body() createCarcatalogDto: CreateCarcatalogDto) {
-    return this.carcatalogService.create(createCarcatalogDto);
+   create(@Body() createCarcatalogDto: CreateCarcatalogDto, @UploadedFile() file: Express.Multer.File ) {
+    createCarcatalogDto.mass = Number(createCarcatalogDto.mass); // Convert string to number
+    if (isNaN(createCarcatalogDto.mass)) {
+      throw new BadRequestException('Mass must be a valid number');
+    }
+    const imageUrl = file ? `http://localhost:3000/uploads/${file.filename}` : null;
+    return this.carcatalogService.create({ ...createCarcatalogDto, imageUrl });
   }
 
    /**
@@ -34,7 +52,8 @@ export class CarcatalogController {
    * 
    * @returns JSON response
    */
-  @Get()
+  
+   @Get()
   @ApiResponse({ status: 200, description: 'Retrive all cars' })
   @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
   findAll() {
@@ -47,6 +66,7 @@ export class CarcatalogController {
    * @param id The unique ID of the car
    * @returns JSON response
    */
+  
   @Get(':id')
   @ApiParam({
     name: "id",
@@ -66,13 +86,14 @@ export class CarcatalogController {
    * @param updatecartalogDto The data to modify
    * @returns JSON response 
    */
+  
   @Patch(':id')
   @ApiParam({
     name: "id",
     type: "number",
     description: 'The unique ID of the car'
   })
-  @ApiResponse({ status: 200, description: 'The modified data of the phone' })
+  @ApiResponse({ status: 200, description: 'The modified data of the car' })
   @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
   update(@Param('id') id: string, @Body() updateCarcatalogDto: UpdateCarcatalogDto) {
     return this.carcatalogService.update(+id, updateCarcatalogDto);
@@ -84,6 +105,7 @@ export class CarcatalogController {
    * @param id The unique ID of the car
    * @returns JSON response
    */
+   
    @Delete(':id')
    @ApiParam({ 
     name: 'id', 

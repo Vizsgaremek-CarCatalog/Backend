@@ -15,6 +15,7 @@ async function main() {
         fuel: faker.vehicle.fuel(),
         manufacturer: faker.vehicle.manufacturer(),
         mass: faker.number.int({ min: 700, max: 3500 }),
+        imageUrl : faker.image.avatar()
       },
     });
   }
