@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCarcatalogDto } from './create-carcatalog.dto';
-import {IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import {IsDateString, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCarcatalogDto extends PartialType(CreateCarcatalogDto) {
@@ -41,7 +41,7 @@ export class UpdateCarcatalogDto extends PartialType(CreateCarcatalogDto) {
         manufacturer:string
         
         @IsOptional()
-        @IsString()
+        @IsInt()
         @ApiProperty({
             example: 1500
         })
@@ -49,4 +49,33 @@ export class UpdateCarcatalogDto extends PartialType(CreateCarcatalogDto) {
         
         @IsOptional()
         imageUrl?: string;
+
+          
+        @IsOptional()
+        @IsInt()
+        @ApiProperty({
+            example: 150000
+        })
+        price:number
+
+        @IsOptional()
+        @IsString()
+        @ApiProperty({
+            example: "Very good car"
+        })
+        description:string
+
+        @IsDateString()
+        @IsOptional()
+        @ApiProperty({
+            example: "2015"
+        })
+        yearMade: Date
+
+        @IsOptional()
+        @IsInt()
+        @ApiProperty({
+            example: 400
+        })
+        horsePower: number
 }

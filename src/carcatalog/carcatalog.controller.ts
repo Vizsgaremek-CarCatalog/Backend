@@ -39,7 +39,7 @@ export class CarcatalogController {
    @ApiResponse({ status: 200, description: 'Car created successfully' })
    @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
    create(@Body() createCarcatalogDto: CreateCarcatalogDto, @UploadedFile() file: Express.Multer.File ) {
-    createCarcatalogDto.mass = Number(createCarcatalogDto.mass); // Convert string to number
+    createCarcatalogDto.mass = Number(createCarcatalogDto.mass); 
     if (isNaN(createCarcatalogDto.mass)) {
       throw new BadRequestException('Mass must be a valid number');
     }

@@ -1,53 +1,81 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
-   /**
-    * The data required to create a new car
-    */
+/**
+ * The data required to create a new car
+ */
 export class CreateCarcatalogDto {
 
-   @IsNotEmpty()
+    @IsNotEmpty()
     @IsString()
     @ApiProperty({
         example: "Mazda"
     })
-    vehicle:string
-    
-   @IsNotEmpty()
+    vehicle: string
+
+    @IsNotEmpty()
     @IsString()
     @ApiProperty({
         example: "SUV"
     })
-    type:string
-    
-   @IsNotEmpty()
+    type: string
+
+    @IsNotEmpty()
     @IsString()
     @ApiProperty({
         example: "red"
     })
-    color:string
+    color: string
 
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
         example: "gasoline"
     })
-    fuel:string
+    fuel: string
 
     @IsNotEmpty()
     @IsString()
     @ApiProperty({
         example: "Kia"
     })
-    manufacturer:string
+    manufacturer: string
 
     @IsNotEmpty()
-    @IsString()
+    @IsInt()
     @ApiProperty({
         example: 1500
     })
-    mass:number
+    mass: number
 
     @IsOptional()
     imageUrl?: string
+
+    @IsNotEmpty()
+    @IsInt()
+    @ApiProperty({
+        example: 1500
+    })
+    price: number
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({
+        example: "Very good car"
+    })
+    description: string
+
+    @IsDateString()
+    @IsOptional()
+    @ApiProperty({
+        example: "2015"
+    })
+    yearMade: Date
+
+    @IsOptional()
+    @IsInt()
+    @ApiProperty({
+        example: 400
+    })
+    horsePower: number
 }

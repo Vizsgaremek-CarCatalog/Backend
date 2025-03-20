@@ -21,7 +21,10 @@ model cars{
   manufacturer String
   mass Int
   imageUrl String?
-  
+  price Int
+  discription String
+  yearMade Int
+  horsePower Int
 }
 model User {
   id Int @id @default(autoincrement())
