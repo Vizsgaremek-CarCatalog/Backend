@@ -70,7 +70,7 @@ export class CreateCarcatalogDto {
     @ApiProperty({
         example: "2015"
     })
-    yearMade: Date
+    yearMade: number
 
     @IsOptional()
     @IsInt()
