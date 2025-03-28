@@ -25,6 +25,8 @@ model cars{
   description String
   yearMade Int
   horsePower Int
+
+  Comment Comment[]
 }
 model User {
   id Int @id @default(autoincrement())
@@ -32,12 +34,22 @@ model User {
   password String
   role      Role     @default(USER)  // Default role is USER
   tokens Token[]
+  comment Comment[]
 }
 
 model Token {
   token String @id
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
+}
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int 
+  car       cars     @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId     Int
 }
 
 enum Role{
