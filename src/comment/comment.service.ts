@@ -1,36 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 
 @Injectable()
 export class CommentService {
   constructor(private readonly db: PrismaService) {}
 
-  async create(createCommentDto: CreateCommentDto, userId: number,) {
-const komment= this.db.comment.create({
+  async create(createCommentDto: CreateCommentDto, userId: number) {
+    return this.db.comment.create({
       data: {
         text: createCommentDto.text,
-        car: {
-          connect: { id: createCommentDto.carId },  // Connect to the car by its ID
-        },
-        user: {
-          connect: { id: userId },  // Connect to the user by their ID
-        },
+        car: { connect: { id: createCommentDto.carId } },
+        user: { connect: { id: userId } },
       },
     });
-    console.log("komment", komment)
-    return komment;
   }
 
   async findAll(carId: number) {
-
     const carIdInt = parseInt(carId.toString(), 10);
-
     if (isNaN(carIdInt)) {
       throw new Error("Invalid carId format");
     }
-  
     return this.db.comment.findMany({
       where: { carId: carIdInt },
       include: { user: { select: { email: true } } },
@@ -43,7 +33,6 @@ const komment= this.db.comment.create({
     });
   }
 
-
   async remove(id: number) {
     return this.db.comment.delete({
       where: { id },
@@ -54,7 +43,6 @@ const komment= this.db.comment.create({
     const user = await this.db.user.findUnique({
       where: { id: userId },
     });
-
-    return user?.role === 'ADMIN' ? true : false;  // Ellenőrizzük, hogy admin-e
+    return user?.role === 'ADMIN' ? true : false;
   }
 }

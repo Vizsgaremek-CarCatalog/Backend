@@ -25,7 +25,7 @@ model cars{
   description String
   yearMade Int
   horsePower Int
-
+  
   Comment Comment[]
 }
 model User {

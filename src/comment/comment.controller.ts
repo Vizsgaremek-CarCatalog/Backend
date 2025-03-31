@@ -1,46 +1,52 @@
-import { Controller, Post, Get, Delete, Body, Param, Headers, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, Param, Headers, ForbiddenException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CreateCommentDto } from './dto/create-comment.dto'; // DTO importálása
-
+import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  // Új komment létrehozása (csak bejelentkezett felhasználóknak)
   @Post()
   async createComment(
-    @Body() createCommentDto: CreateCommentDto, // DTO használata
-    @Headers('user-id') userId: string, // A frontend biztosítja, hogy a user be legyen jelentkezve
-    
+    @Body() createCommentDto: CreateCommentDto,
+    @Headers('user-id') userId: string,
   ) {
     const userIdInt = parseInt(userId, 10);
-  
     if (isNaN(userIdInt)) {
       throw new BadRequestException('Invalid user-id format');
     }
     return this.commentService.create(createCommentDto, userIdInt);
   }
 
-  // Autóhoz tartozó kommentek lekérése
   @Get(':carId')
   async getComments(@Param('carId') carId: number) {
     return this.commentService.findAll(carId);
   }
 
-  // Komment törlése (csak adminok)
   @Delete(':id')
   async deleteComment(
-    @Param('id') id: number,
-    @Headers('user-id') userId: number, // Admin jogosultságot kezeljük
+    @Param('id') id: string, // Change to string and parse
+    @Headers('user-id') userId: string,
   ) {
-    // Ellenőrizzük, hogy admin-e a felhasználó
-    const isAdmin = await this.commentService.checkIfAdmin(userId);
+    const userIdInt = parseInt(userId, 10);
+    const commentIdInt = parseInt(id, 10);
+    if (isNaN(userIdInt) || isNaN(commentIdInt)) {
+      throw new BadRequestException('Invalid user-id or comment id format');
+    }
+
+    const isAdmin = await this.commentService.checkIfAdmin(userIdInt);
     if (!isAdmin) {
       throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez.');
     }
 
-    await this.commentService.remove(id);
-    return { message: 'Komment törölve.' };
-}
+    try {
+      await this.commentService.remove(commentIdInt);
+      return { message: 'Komment törölve.' };
+    } catch (error) {
+      if (error.code === 'P2025') { // Prisma record not found error
+        throw new NotFoundException('Comment not found');
+      }
+      throw error; // Re-throw other errors for a 500
+    }
+  }
 }
