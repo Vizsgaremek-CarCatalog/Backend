@@ -5,60 +5,60 @@ export declare class CarcatalogService {
     private readonly db;
     constructor(db: PrismaService);
     create(createCarcatalogDto: CreateCarcatalogDto): import(".prisma/client").Prisma.Prisma__carsClient<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }[]>;
     findOne(id: number): import(".prisma/client").Prisma.Prisma__carsClient<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     update(id: number, updateCarcatalogDto: UpdateCarcatalogDto): Promise<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }>;
     remove(id: number): Promise<boolean>;
 }

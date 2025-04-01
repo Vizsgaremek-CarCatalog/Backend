@@ -6,60 +6,60 @@ export declare class CarcatalogController {
     constructor(carcatalogService: CarcatalogService);
     private static storage;
     create(createCarcatalogDto: CreateCarcatalogDto, file: Express.Multer.File): import(".prisma/client").Prisma.Prisma__carsClient<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs>;
     findAll(): import(".prisma/client").Prisma.PrismaPromise<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }[]>;
     findOne(id: string): import(".prisma/client").Prisma.Prisma__carsClient<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     update(id: string, updateCarcatalogDto: UpdateCarcatalogDto): Promise<{
+        id: number;
         vehicle: string;
         type: string;
-        description: string;
         color: string;
         fuel: string;
         manufacturer: string;
         mass: number;
         imageUrl: string | null;
         price: number;
+        description: string;
         yearMade: number;
         horsePower: number;
-        id: number;
     }>;
     remove(id: string): Promise<boolean>;
 }
