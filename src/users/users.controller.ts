@@ -11,18 +11,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   /**
-   * Creates a new car entry in the catalog
+   * Creates a new user for the website
    * 
-   * @param id The unique ID of the car
    * @param createUserDto The data to be created
    * @returns JSON response 
    */
   
-  @ApiParam({
-    name: "id",
-    type: "number",
-    description: 'The unique ID of the car'
-  })
+
   @ApiResponse({ status: 200, description: 'user created successfully' })
   @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
   @Post()
@@ -46,7 +41,7 @@ export class UsersController {
   }
    
   /**
-   * Retrieves a specific users by ID
+   * Retrieves a specific user by ID
    * 
    * @param id The unique ID of the user
    * @returns JSON response
@@ -64,7 +59,7 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
  /**
-   * Modifies the details of an existing car
+   * Modifies the details of an existing user
    * 
    * @param id The unique ID of the user
    * @param updateUserDto The data to modify

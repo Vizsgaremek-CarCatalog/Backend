@@ -54,7 +54,7 @@ export class CreateCarcatalogDto {
     @IsNotEmpty()
     @IsInt()
     @ApiProperty({
-        example: 1500
+        example: 15000
     })
     price: number
 

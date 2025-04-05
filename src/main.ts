@@ -29,7 +29,8 @@ async function bootstrap() {
   app.setViewEngine('ejs');
   
   const docConfig = new DocumentBuilder()
-  .setTitle('Phone app')
+  .setTitle('Carcatalog app API')
+  .setDescription('The Carcatalog swagger API')
   .addBearerAuth()
   .build();
   SwaggerModule.setup(

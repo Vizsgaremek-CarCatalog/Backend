@@ -22,19 +22,14 @@ export class CarcatalogController {
 
 
    /**
-   * Creates a new user
+   * Creates a new car
    * 
-   * @param id The unique ID of the user
+   *
    * @param createcarcatalogDto The data to be created
    * @returns JSON response 
    */
    
    @Post()
-   @ApiParam({
-     name: "id",
-     type: "number",
-     description: 'The unique ID of the user'
-   })
    @UseInterceptors(FileInterceptor('image', { storage: CarcatalogController.storage }))
    @ApiResponse({ status: 200, description: 'Car created successfully' })
    @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
@@ -47,13 +42,14 @@ export class CarcatalogController {
     return this.carcatalogService.create({ ...createCarcatalogDto, imageUrl });
   }
 
+
    /**
    * Retrieves all car entries in the catalog
    * 
    * @returns JSON response
    */
   
-   @Get()
+  @Get()
   @ApiResponse({ status: 200, description: 'Retrive all cars' })
   @ApiBadRequestResponse({ description: 'The supplied data was invalid' })
   findAll() {
