@@ -145,6 +145,27 @@ async getFavorites(
     }
     await this.usersService.removeFavorite(id, cid);
   }
+
+  @Patch(':id/change-password')
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid current password or new password' })
+  async changePassword(
+    @Param('id') userId: string,
+    @Body() body: { currentPassword: string; newPassword: string; confirmPassword: string },
+    @Headers('user-id') headerUserId: string
+  ) {
+    const id = parseInt(userId);
+    if (isNaN(id) || id !== parseInt(headerUserId)) {
+      throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
+    }
+  
+    const result = await this.usersService.changePassword(id, body.currentPassword, body.newPassword, body.confirmPassword);
+    if (!result) {
+      throw new HttpException('Failed to change password', HttpStatus.BAD_REQUEST);
+    }
+    return { message: 'Password changed successfully' };
+  }
+
 }
 
 

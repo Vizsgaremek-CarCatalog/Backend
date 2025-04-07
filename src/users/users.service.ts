@@ -119,4 +119,35 @@ async removeFavorite(userId: number, carId: number): Promise<void> {
   });
 }
   
+async changePassword(
+  userId: number,
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string
+): Promise<boolean> {
+  if (newPassword !== confirmPassword) {
+    throw new Error('Passwords do not match');
+  }
+
+  const user = await this.db.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const isPasswordValid = await argon2.verify(user.password, currentPassword);
+  if (!isPasswordValid) {
+    throw new Error('Invalid current password');
+  }
+
+  const hashedNewPassword = await argon2.hash(newPassword);
+  await this.db.user.update({
+    where: { id: userId },
+    data: { password: hashedNewPassword },
+  });
+
+  return true;
+}
+
+
+
 }
