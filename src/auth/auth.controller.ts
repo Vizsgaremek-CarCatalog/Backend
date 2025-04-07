@@ -21,11 +21,7 @@ export class AuthController {
   async login(@Body() loginData: LoginDto) {
     try {
       // A login függvény visszaadja a token-t, userId-t és role-t is
-<<<<<<< HEAD
-      const { token,  role, userid } = await this.authService.login(loginData);
-=======
       const { token,  role,userid } = await this.authService.login(loginData);
->>>>>>> 0666dfcef985b58cbcd22fc66eed45f8d54187af
       return { token,  role ,userid }; // Visszaküldjük a válaszban a role-t is
     } catch {
       throw new UnauthorizedException("Hibás email vagy jelszó");

@@ -12,36 +12,41 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-model cars{
-  id Int @id @default(autoincrement()) 
-  vehicle String
-  type String
-  color String
-  fuel String
+
+model cars {
+  id          Int        @id @default(autoincrement()) 
+  vehicle     String
+  type        String
+  color       String
+  fuel        String
   manufacturer String
-  mass Int
-  imageUrl String?
-  price Int
+  mass        Int
+  imageUrl    String?
+  price       Int
   description String
-  yearMade Int
-  horsePower Int
+  yearMade    Int
+  horsePower  Int
   
-  Comment Comment[]
+  Comment     Comment[]
+  Favorite    Favorite[] // Add relation to Favorite
 }
+
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  password String
-  role      Role     @default(USER)  // Default role is USER
-  tokens Token[]
-  comment Comment[]
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  role       Role       @default(USER)
+  tokens     Token[]
+  comment    Comment[]
+  Favorite   Favorite[] // Add relation to Favorite
 }
 
 model Token {
-  token String @id
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
+  token   String @id
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int
 }
+
 model Comment {
   id        Int      @id @default(autoincrement())
   text      String
@@ -52,7 +57,18 @@ model Comment {
   carId     Int
 }
 
-enum Role{
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  car       cars     @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId     Int
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, carId]) // Prevent duplicate favorites
+}
+
+enum Role {
   USER
   ADMIN
 }

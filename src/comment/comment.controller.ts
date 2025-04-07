@@ -1,17 +1,13 @@
 import { Controller, Post, Get, Delete, Body, Param, Headers, ForbiddenException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-<<<<<<< HEAD
 import { ApiBadRequestResponse, ApiBearerAuth, ApiForbiddenResponse, ApiNotFoundResponse, ApiParam, ApiResponse } from '@nestjs/swagger';
-=======
->>>>>>> 0666dfcef985b58cbcd22fc66eed45f8d54187af
 
 @Controller('comments')
 @ApiBearerAuth()
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-<<<<<<< HEAD
    /**
    * Creates a new comment when you are logged in
    * 
@@ -20,8 +16,6 @@ export class CommentController {
    * @returns JSON response 
    */
    
-=======
->>>>>>> 0666dfcef985b58cbcd22fc66eed45f8d54187af
   @Post()
   @ApiResponse({status:200,description:"Comment created succesfully"})
   @ApiBadRequestResponse({description:"the supplied data was invalid"})
@@ -54,7 +48,6 @@ export class CommentController {
    */
    
 
-<<<<<<< HEAD
      @Delete(':id')
      @ApiParam({
        name: 'id',
@@ -92,32 +85,4 @@ export class CommentController {
        }
      }
    }
-=======
-  @Delete(':id')
-  async deleteComment(
-    @Param('id') id: string, // Change to string and parse
-    @Headers('user-id') userId: string,
-  ) {
-    const userIdInt = parseInt(userId, 10);
-    const commentIdInt = parseInt(id, 10);
-    if (isNaN(userIdInt) || isNaN(commentIdInt)) {
-      throw new BadRequestException('Invalid user-id or comment id format');
-    }
 
-    const isAdmin = await this.commentService.checkIfAdmin(userIdInt);
-    if (!isAdmin) {
-      throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez.');
-    }
-
-    try {
-      await this.commentService.remove(commentIdInt);
-      return { message: 'Komment törölve.' };
-    } catch (error) {
-      if (error.code === 'P2025') { // Prisma record not found error
-        throw new NotFoundException('Comment not found');
-      }
-      throw error; // Re-throw other errors for a 500
-    }
-  }
-}
->>>>>>> 0666dfcef985b58cbcd22fc66eed45f8d54187af

@@ -51,21 +51,13 @@
         @IsOptional()
         imageUrl?: string
 
-<<<<<<< HEAD
     @IsNotEmpty()
     @IsInt()
     @ApiProperty({
         example: 15000
     })
     price: number
-=======
-        @IsNotEmpty()
-        @IsInt()
-        @ApiProperty({
-            example: 1500
-        })
-        price: number
->>>>>>> 0666dfcef985b58cbcd22fc66eed45f8d54187af
+    
 
         @IsOptional()
         @IsString()

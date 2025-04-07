@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request, HttpException, HttpStatus, Headers } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { cars } from '@prisma/client';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -94,4 +95,56 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
+
+
+// GET /users/:userId/favorites
+@Get(':userId/favorites')
+async getFavorites(
+  @Param('userId') userId: string,
+  @Headers('user-id') headerUserId: string,
+): Promise<cars[]> {
+  const id = parseInt(userId);
+  if (isNaN(id) || id !== parseInt(headerUserId)) {
+    throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
+  }
+  return this.usersService.getUserFavorites(id);
 }
+
+  // POST /users/:userId/favorites
+  @Post(':userId/favorites')
+  async addFavorite(
+    @Param('userId') userId: string,
+    @Body() body: { carId: number },
+    @Headers('user-id') headerUserId: string,
+  ): Promise<cars> {
+    const id = parseInt(userId);
+    if (isNaN(id) || id !== parseInt(headerUserId)) {
+      throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
+    }
+    try {
+      return await this.usersService.addFavorite(id, body.carId);
+    } catch (error) {
+      if (error.code === 'P2002') { // Unique constraint violation
+        throw new HttpException('Car already in favorites', HttpStatus.BAD_REQUEST);
+      }
+      throw new HttpException('Failed to add favorite', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // DELETE /users/:userId/favorites/:carId
+  @Delete(':userId/favorites/:carId')
+  async removeFavorite(
+    @Param('userId') userId: string,
+    @Param('carId') carId: string,
+    @Headers('user-id') headerUserId: string,
+  ): Promise<void> {
+    const id = parseInt(userId);
+    const cid = parseInt(carId);
+    if (isNaN(id) || id !== parseInt(headerUserId) || isNaN(cid)) {
+      throw new HttpException('Unauthorized or invalid IDs', HttpStatus.UNAUTHORIZED);
+    }
+    await this.usersService.removeFavorite(id, cid);
+  }
+}
+
+

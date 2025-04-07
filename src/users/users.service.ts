@@ -4,10 +4,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon2 from 'argon2';
 import { PrismaService } from 'src/prisma.service';
 import { ConfigService } from '@nestjs/config'; // Import ConfigService
+import { cars, Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private prisma: PrismaService,
     private readonly db: PrismaService,
     private readonly configService: ConfigService, // Inject ConfigService
   ) {}
@@ -84,4 +86,37 @@ export class UsersService {
     delete user.password; // Remove password for security
     return user;
   }
+
+
+// Fetch user's favorite cars
+async getUserFavorites(userId: number): Promise<cars[]> {
+  const favorites = await this.prisma.favorite.findMany({
+    where: { userId },
+    include: { car: true },
+  });
+  return favorites.map((fav) => fav.car);
+}
+
+// Add a car to user's favorites
+async addFavorite(userId: number, carId: number): Promise<cars> {
+  const favorite = await this.prisma.favorite.create({
+    data: {
+      userId,
+      carId,
+    },
+    include: { car: true },
+  });
+  return favorite.car;
+}
+
+// Remove a car from user's favorites
+async removeFavorite(userId: number, carId: number): Promise<void> {
+  await this.prisma.favorite.deleteMany({
+    where: {
+      userId,
+      carId,
+    },
+  });
+}
+  
 }
