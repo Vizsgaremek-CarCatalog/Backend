@@ -113,10 +113,10 @@ export class UsersController {
   @Get(':userId/favorites')
   async getFavorites(
     @Param('userId') userId: string,
-    @Headers('user-id') headerUserId: string,
+   
   ): Promise<cars[]> {
     const id = parseInt(userId);
-    if (isNaN(id) || id !== parseInt(headerUserId)) {
+    if (isNaN(id) ) {
       throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
     }
     return this.usersService.getUserFavorites(id);
@@ -138,10 +138,10 @@ export class UsersController {
   async addFavorite(
     @Param('userId') userId: string,
     @Body() addFavoriteDto: AddFavoriteDto,
-    @Headers('user-id') headerUserId: string,
+  
   ): Promise<cars> {
     const id = parseInt(userId);
-    if (isNaN(id) || id !== parseInt(headerUserId)) {
+    if (isNaN(id) ) {
       throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
     }
     try {
@@ -170,11 +170,11 @@ export class UsersController {
   async removeFavorite(
     @Param('userId') userId: string,
     @Param('carId') carId: string,
-    @Headers('user-id') headerUserId: string,
+  
   ): Promise<void> {
     const id = parseInt(userId);
     const cid = parseInt(carId);
-    if (isNaN(id) || id !== parseInt(headerUserId) || isNaN(cid)) {
+    if (isNaN(id) ||  isNaN(cid)) {
       throw new HttpException('Unauthorized or invalid IDs', HttpStatus.UNAUTHORIZED);
     }
     await this.usersService.removeFavorite(id, cid);
@@ -193,10 +193,10 @@ export class UsersController {
   async changePassword(
     @Param('id') userId: string,
     @Body() changePasswordDto: ChangePasswordDto,
-    @Headers('user-id') headerUserId: string
+   
   ) {
     const id = parseInt(userId);
-    if (isNaN(id) || id !== parseInt(headerUserId)) {
+    if (isNaN(id) ) {
       throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
     }
 

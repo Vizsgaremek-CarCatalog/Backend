@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateCarcatalogDto } from './dto/create-carcatalog.dto';
 import { UpdateCarcatalogDto } from './dto/update-carcatalog.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -17,43 +17,84 @@ export class CarcatalogService {
     return this.db.cars.findMany();
   }
 
-  findOne(id: number) {
-    return this.db.cars.findUnique({where: {id}});
-  }
-
-  async update(id: number, updateCarcatalogDto: UpdateCarcatalogDto) {
-    try{
-      return await this.db.cars.update({
-       data: updateCarcatalogDto,
-       where: {id}
-     });
-   }catch{
-     return undefined;
-   }
-  }
-
- async remove(id: number) {
- 
-  try {
-    // Ellenőrizd, hogy létezik-e az id
+  async findOne(id: number) {
+    // 1. Validate the ID
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException('Invalid ID: ID must be a positive number');
+    }
+  
+    // 2. Find the car
     const car = await this.db.cars.findUnique({
       where: { id },
     });
-
-    // Ha nem található, térj vissza hibával vagy false-szal
+  
+    // 3. Check if the car exists
     if (!car) {
-      return { message: 'Car not found', success: false };
+      throw new NotFoundException(`Car with ID ${id} not found`);
     }
+  
+    return car;
+  }
+  async update(id: number, updateCarcatalogDto: UpdateCarcatalogDto) {
+    // 1. Check if id is a valid number
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException('Invalid ID: ID must be a positive number');
+    }
+  
+    try {
+      // 2. Check if the record exists before updating
+      const existingCar = await this.db.cars.findUnique({
+        where: { id },
+      });
+  
+      if (!existingCar) {
+        throw new NotFoundException(`Car with ID ${id} not found`);
+      }
+  
+      // 3. Perform the update
+      return await this.db.cars.update({
+        data: updateCarcatalogDto,
+        where: { id },
+      });
+    } catch (error) {
+      // 4. Handle specific errors
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error; // Re-throw known exceptions
+      }
+      throw new InternalServerErrorException('Failed to update car data');
+    }
+  }
 
-    // Ha létezik, töröld az adott rekordot
-    await this.db.cars.delete({
-      where: { id },
-    });
-
-    return { message: 'Car deleted successfully', success: true };
-  } catch (error) {
-    // Hibakezelés
-    return { message: 'An error occurred', success: false };
+  async remove(id: number) {
+    // 1. Validate the ID
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException('Invalid ID: ID must be a positive number');
+    }
+  
+    try {
+      // 2. Check if the car exists
+      const car = await this.db.cars.findUnique({
+        where: { id },
+      });
+  
+      if (!car) {
+        throw new NotFoundException(`Car with ID ${id} not found`);
+      }
+  
+      // 3. Delete the car
+      await this.db.cars.delete({
+        where: { id },
+      });
+  
+      return { message: 'Car deleted successfully' };
+    } catch (error) {
+      // 4. Handle specific errors
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error; // Re-throw known exceptions
+      }
+      // Handle Prisma-specific errors if needed (e.g., P2025 for not found, though already checked)
+      throw new InternalServerErrorException('Failed to delete car');
+    }
   }
 }
-}
+

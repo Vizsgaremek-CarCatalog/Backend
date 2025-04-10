@@ -51,7 +51,7 @@ export class CommentController {
      @Delete(':id')
      @ApiParam({
        name: 'id',
-       type: 'string', // Matches the raw input type; Swagger will show this as the API expects a string that represents an integer
+       type: 'string',
        description: 'The unique ID of the comment',
      })
      @ApiResponse({ status: 200, description: 'Comment deleted successfully' })
@@ -59,21 +59,24 @@ export class CommentController {
      @ApiForbiddenResponse({ description: 'User lacks permission to delete the comment' })
      @ApiNotFoundResponse({ description: 'Comment not found' })
      async deleteComment(
-       @Param('id') id: string, // Keep as string, parsed manually below
+       @Param('id') id: string,
        @Headers('user-id') userId: string,
+       @Headers('admin') adminStatus: string,  // Admin status a headerből
      ) {
        const userIdInt = parseInt(userId, 10);
        const commentIdInt = parseInt(id, 10);
-   
+     
        if (isNaN(userIdInt) || isNaN(commentIdInt)) {
          throw new BadRequestException('Invalid user-id or comment id format');
        }
-   
-       const isAdmin = await this.commentService.checkIfAdmin(userIdInt);
+     
+       // Ellenőrizd az admin státuszt a headerből
+       const isAdmin = adminStatus === 'true';
+     
        if (!isAdmin) {
          throw new ForbiddenException('Nincs jogosultságod ehhez a művelethez.');
        }
-   
+     
        try {
          await this.commentService.remove(commentIdInt);
          return { message: 'Komment törölve.' };
