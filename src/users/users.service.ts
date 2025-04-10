@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon2 from 'argon2';
@@ -50,34 +50,39 @@ export class UsersService {
     return this.db.user.findUnique({ where: { id } });
   }
 
-  // Update user data
   async update(id: number, updateUserDto: UpdateUserDto) {
-    try {
-      const data = { ...updateUserDto };
+    // 1. Ellenőrizzük, hogy az ID érvényes szám és létező rekord
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException('Invalid ID: ID must be a positive number');
+    }
   
-      // Ha van új jelszó, titkosítsuk
+    try {
+      // 2. Ellenőrizzük, hogy létezik-e a felhasználó az adatbázisban
+      const existingUser = await this.db.user.findUnique({
+        where: { id },
+      });
+  
+      if (!existingUser) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+  
+      // 3. Ha van új jelszó, titkosítjuk
+      const data = { ...updateUserDto };
       if (data.password) {
         data.password = await argon2.hash(data.password);
       }
   
+      // 4. Végrehajtjuk az update műveletet
       return await this.db.user.update({
         data,
         where: { id },
       });
-    } catch {
-      return undefined; // If an error occurs (e.g., user not found), return undefined
-    }
-  }
-
-  // Delete user by ID
-  async remove(id: number) {
-    try {
-      await this.db.user.delete({
-        where: { id },
-      });
-      return true;
-    } catch {
-      return false;
+    } catch (error) {
+      // 5. Hibák kezelése
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error; // Ismert hibák újra dobása
+      }
+      throw new InternalServerErrorException('Failed to update user data');
     }
   }
 

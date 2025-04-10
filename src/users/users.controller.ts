@@ -95,7 +95,7 @@ export class UsersController {
   @ApiBadRequestResponse({ description: 'User not found or invalid ID' })
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.update+id;
   }
 
   /**
