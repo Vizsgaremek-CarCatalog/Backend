@@ -16,7 +16,9 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    transform:true,
+  }));
 
   const uploadDir = join(__dirname, '..', 'uploads');
   if (!existsSync(uploadDir)) {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCarcatalogDto } from './dto/create-carcatalog.dto';
 import { UpdateCarcatalogDto } from './dto/update-carcatalog.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -33,13 +33,27 @@ export class CarcatalogService {
   }
 
  async remove(id: number) {
-    try{
-      await this.db.cars.delete({
-        where: {id}
-      })
-      return true
-    }catch{
-      return false
-    };
+ 
+  try {
+    // Ellenőrizd, hogy létezik-e az id
+    const car = await this.db.cars.findUnique({
+      where: { id },
+    });
+
+    // Ha nem található, térj vissza hibával vagy false-szal
+    if (!car) {
+      return { message: 'Car not found', success: false };
+    }
+
+    // Ha létezik, töröld az adott rekordot
+    await this.db.cars.delete({
+      where: { id },
+    });
+
+    return { message: 'Car deleted successfully', success: true };
+  } catch (error) {
+    // Hibakezelés
+    return { message: 'An error occurred', success: false };
   }
+}
 }

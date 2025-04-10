@@ -65,10 +65,10 @@ export class UpdateCarcatalogDto extends PartialType(CreateCarcatalogDto) {
         })
         description:string
 
-        @IsDateString()
+        @IsInt()
         @IsOptional()
         @ApiProperty({
-            example: "2015"
+            example: 2015
         })
         yearMade: number
 

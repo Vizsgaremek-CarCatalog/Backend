@@ -53,8 +53,15 @@ export class UsersService {
   // Update user data
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
+      const data = { ...updateUserDto };
+  
+      // Ha van új jelszó, titkosítsuk
+      if (data.password) {
+        data.password = await argon2.hash(data.password);
+      }
+  
       return await this.db.user.update({
-        data: updateUserDto,
+        data,
         where: { id },
       });
     } catch {
