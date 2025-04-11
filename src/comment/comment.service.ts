@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
@@ -19,7 +19,7 @@ export class CommentService {
   async findAll(carId: number) {
     const carIdInt = parseInt(carId.toString(), 10);
     if (isNaN(carIdInt)) {
-      throw new Error("Invalid carId format");
+      throw new BadRequestException('Invalid carId format');
     }
     return this.db.comment.findMany({
       where: { carId: carIdInt },
@@ -34,15 +34,25 @@ export class CommentService {
   }
 
   async remove(id: number) {
-    return this.db.comment.delete({
-      where: { id },
-    });
+    try {
+      return await this.db.comment.delete({
+        where: { id },
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new NotFoundException('Comment not found');
+      }
+      throw error;
+    }
   }
 
   async checkIfAdmin(userId: number) {
     const user = await this.db.user.findUnique({
       where: { id: userId },
     });
-    return user?.role === 'ADMIN' ? true : false;
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user.role === 'ADMIN';
   }
 }
