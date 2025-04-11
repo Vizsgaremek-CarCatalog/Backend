@@ -1,15 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpException, HttpStatus, Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpException, HttpStatus, Headers, NotFoundException, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AddFavoriteDto, ChangePasswordDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { cars } from '@prisma/client';
+import { CarcatalogService } from 'src/carcatalog/carcatalog.service';
 
 @Controller('users')
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService,
+              private readonly carService: CarcatalogService
+  ) { }
 
   /**
    * Creates a new user for the website
@@ -162,24 +165,33 @@ export class UsersController {
 
   // POST /users/:userId/favorites
   // DELETE /users/:userId/favorites/:carId
-  @ApiParam({ name: 'userId', type: 'number', description: 'The unique ID of the user' })
-  @ApiParam({ name: 'carId', type: 'number', description: 'The unique ID of the car' })
-  @ApiResponse({ status: 200, description: 'Car successfully removed from favorites' })
-  @ApiBadRequestResponse({ description: 'Unauthorized or invalid IDs' })
   @Delete(':userId/favorites/:carId')
-  async removeFavorite(
-    @Param('userId') userId: string,
-    @Param('carId') carId: string,
-  
-  ): Promise<void> {
-    const id = parseInt(userId);
-    const cid = parseInt(carId);
-    if (isNaN(id) ||  isNaN(cid)) {
-      throw new HttpException('Unauthorized or invalid IDs', HttpStatus.UNAUTHORIZED);
-    }
-    await this.usersService.removeFavorite(id, cid);
+@ApiParam({ name: 'userId', type: 'number', description: 'The unique ID of the user' })
+@ApiParam({ name: 'carId', type: 'number', description: 'The unique ID of the car' })
+@ApiResponse({ status: 200, description: 'Car successfully removed from favorites' })
+@ApiBadRequestResponse({ description: 'Unauthorized or invalid IDs' })
+@ApiNotFoundResponse({ description: 'Car not found' })
+async removeFavorite(
+  @Param('userId') userId: string,
+  @Param('carId') carId: string,
+): Promise<{ message: string }> {
+  const id = parseInt(userId);
+  const cid = parseInt(carId);
+
+  if (isNaN(id) || isNaN(cid)) {
+    throw new HttpException('Unauthorized or invalid IDs', HttpStatus.UNAUTHORIZED);
   }
 
+  // Ellenőrizd, hogy létezik-e az adott autó
+  const car = await this.carService.findOne(cid); // vagy carRepository.findOne(cid)
+  if (!car) {
+    throw new NotFoundException('Car not found');
+  }
+
+  await this.usersService.removeFavorite(id, cid);
+
+  return { message: 'Car successfully removed from favorites.' };
+}
   /**
      * Update a user password by ID
      * 
@@ -190,25 +202,33 @@ export class UsersController {
   @ApiParam({ name: 'id', type: 'number', description: 'The unique ID of the user' })
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiBadRequestResponse({ description: 'Invalid current password or new password' })
+  @ApiNotFoundResponse({ description: 'User not found' })
   async changePassword(
     @Param('id') userId: string,
     @Body() changePasswordDto: ChangePasswordDto,
-   
   ) {
     const id = parseInt(userId);
-    if (isNaN(id) ) {
+    if (isNaN(id)) {
       throw new HttpException('Unauthorized or invalid user ID', HttpStatus.UNAUTHORIZED);
     }
-
+  
+    // Ellenőrizzük, hogy létezik-e a user
+    const user = await this.usersService.findOne(id); // vagy repository lekérdezés
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
     const result = await this.usersService.changePassword(
       id,
       changePasswordDto.currentPassword,
       changePasswordDto.newPassword,
       changePasswordDto.confirmPassword
     );
+  
     if (!result) {
-      throw new HttpException('Failed to change password', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Failed to change password');
     }
+  
     return { message: 'Password changed successfully' };
   }
 
