@@ -7,8 +7,8 @@ async function main() {
   console.log('Seeding database with fake car data...');
 
   const cars = [
-    { vehicle: 'Model S', type: 'Sedan', color: 'Red', fuel: 'Electric', manufacturer: 'Tesla', mass: 2000, imageUrl: '/uploads/red.jpg', price: 79999, description: 'Luxury electric sedan with autopilot. Price: $79,999.', yearMade: 2023, horsePower: 670 },
-    { vehicle: 'Civic', type: 'Sedan', color: 'Blue', fuel: 'Gasoline', manufacturer: 'Honda', mass: 1400, imageUrl: '/uploads/honda_civic.jpg', price: 25000, description: 'Reliable and fuel-efficient compact car. Price: $25,000.', yearMade: 2022, horsePower: 158 },
+    { vehicle: 'Model S', type: 'Sedan', color: 'Red', fuel: 'Electric', manufacturer: 'Tesla', mass: 2000, imageUrl: '/uploads/tesla.jpg', price: 79999, description: 'Luxury electric sedan with autopilot. Price: $79,999.', yearMade: 2023, horsePower: 670 },
+    { vehicle: 'Civic', type: 'Sedan', color: 'Blue', fuel: 'Gasoline', manufacturer: 'Honda', mass: 1400, imageUrl: '/uploads/civic.jpg', price: 25000, description: 'Reliable and fuel-efficient compact car. Price: $25,000.', yearMade: 2022, horsePower: 158 },
     { vehicle: 'F-150', type: 'Truck', color: 'Black', fuel: 'Gasoline', manufacturer: 'Ford', mass: 2500, imageUrl: '/uploads/ford_f150.jpg', price: 45000, description: 'Best-selling pickup truck in the US. Price: $45,000.', yearMade: 2023, horsePower: 400 },
     { vehicle: 'Mustang', type: 'Coupe', color: 'Yellow', fuel: 'Gasoline', manufacturer: 'Ford', mass: 1700, imageUrl: '/uploads/ford_mustang.jpg', price: 55000, description: 'American muscle car with high performance. Price: $55,000.', yearMade: 2023, horsePower: 480 },
     { vehicle: 'Camry', type: 'Sedan', color: 'White', fuel: 'Hybrid', manufacturer: 'Toyota', mass: 1600, imageUrl: '/uploads/toyota_camry.jpg', price: 32000, description: 'Comfortable and fuel-efficient sedan. Price: $32,000.', yearMade: 2022, horsePower: 208 },
@@ -36,7 +36,7 @@ async function main() {
     { vehicle: 'XC90', type: 'SUV', color: 'Black', fuel: 'Hybrid', manufacturer: 'Volvo', mass: 2200, imageUrl: '/uploads/volvo_xc90.jpg', price: 72000, description: 'Spacious, safe, and premium hybrid SUV. Price: $72,000.', yearMade: 2023, horsePower: 455 },
     { vehicle: 'Ranger Raptor', type: 'Truck', color: 'Orange', fuel: 'Gasoline', manufacturer: 'Ford', mass: 2400, imageUrl: '/uploads/ford_ranger_raptor.jpg', price: 58000, description: 'High-performance off-road pickup. Price: $58,000.', yearMade: 2023, horsePower: 405 },
     { vehicle: 'e-Tron GT', type: 'Sedan', color: 'Gray', fuel: 'Electric', manufacturer: 'Audi', mass: 2100, imageUrl: '/uploads/audi_etron_gt.jpg', price: 104000, description: 'Sleek and powerful electric grand tourer. Price: $104,000.', yearMade: 2023, horsePower: 637 },
-    { vehicle: 'Cybertruck', type: 'Truck', color: 'Silver', fuel: 'Electric', manufacturer: 'Tesla', mass: 3000, imageUrl: '/uploads/tesla_cybertruck.jpg', price: 69999, description: 'Futuristic electric pickup with armored glass. Price: $69,999.', yearMade: 2024, horsePower: 800 }
+    { vehicle: 'Cybertruck', type: 'Truck', color: 'Silver', fuel: 'Electric', manufacturer: 'Tesla', mass: 3000, imageUrl: '/uploads/tesla_cybertruck.jpg', price: 69999, description: 'Futuristic electric pickup with armored glass. Price: $69,999.', yearMade: 2024, horsePower: 800 },
     { vehicle: 'R1T', type: 'Truck', color: 'Blue', fuel: 'Electric', manufacturer: 'Rivian', mass: 2700, imageUrl: '/uploads/rivian_r1t.jpg', price: 85000, description: 'Adventure-ready electric pickup truck. Price: $85,000.', yearMade: 2024, horsePower: 835 },
     { vehicle: 'Emira', type: 'Coupe', color: 'Green', fuel: 'Gasoline', manufacturer: 'Lotus', mass: 1400, imageUrl: '/uploads/lotus_emira.jpg', price: 96000, description: 'Lightweight sports car with superb handling. Price: $96,000.', yearMade: 2023, horsePower: 400 },
     { vehicle: 'Polestar 3', type: 'SUV', color: 'Silver', fuel: 'Electric', manufacturer: 'Polestar', mass: 2300, imageUrl: '/uploads/polestar_3.jpg', price: 83900, description: 'Futuristic electric luxury SUV. Price: $83,900.', yearMade: 2024, horsePower: 489 },
@@ -52,30 +52,21 @@ async function main() {
     { vehicle: 'SF90 Stradale', type: 'Coupe', color: 'Rosso Corsa', fuel: 'Hybrid', manufacturer: 'Ferrari', mass: 1570, imageUrl: '/uploads/ferrari_sf90.jpg', price: 507000, description: 'Hybrid supercar with extreme performance. Price: $507,000.', yearMade: 2024, horsePower: 986 },
     { vehicle: 'GT-R Nismo', type: 'Coupe', color: 'White', fuel: 'Gasoline', manufacturer: 'Nissan', mass: 1720, imageUrl: '/uploads/nissan_gtr_nismo.jpg', price: 220000, description: 'Japanese performance legend. Price: $220,000.', yearMade: 2023, horsePower: 600 },
     { vehicle: 'Aston Martin Valkyrie', type: 'Coupe', color: 'Dark Green', fuel: 'Hybrid', manufacturer: 'Aston Martin', mass: 1030, imageUrl: '/uploads/aston_martin_valkyrie.jpg', price: 3000000, description: 'Hypercar built with F1 technology. Price: $3,000,000.', yearMade: 2024, horsePower: 1160 }
-  
+
   ]
-  ;
+
 
   await prisma.cars.createMany({
     data: cars,
   });
 
 
-   
-    
-    await prisma.cars.createMany({
-      data: cars,
-    });
-      
-    
- 
-  ;  
-  }
-  
-=======
->>>>>>> 11442dca745a5202064271429895bdbe3f1a3140
   console.log('Seeding completed! ✅');
-}
+
+  
+};
+
+
 
 main()
   .catch((e) => {
