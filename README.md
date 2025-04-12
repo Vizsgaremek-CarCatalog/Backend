@@ -1,6 +1,6 @@
-# Car Showcase
+# Car Showcase Backend
 
-A web application for browsing, comparing, and managing a catalog of cars. Features include user authentication, car filtering, favorites, and an admin dashboard for managing car listings.
+This backend application powers a web-based car catalog, allowing users to browse, compare, and manage a variety of cars. The main features of this system include user authentication, car filtering, favorites management, and an admin dashboard for managing car listings.
 
 ## Prerequisites
 
@@ -24,13 +24,13 @@ Install Dependencies
 
 Using npm:
       npm install
-      npm install @nestjs/common
-      npm install @nestjs/swagger
-      npm install @nestjs/platform-express
-      npm install multer 
-      npm install argon2
-      npm install @nestjs/config
-      npm install @prisma/client
+      npm install @nestjs/common, 
+      npm install @nestjs/swagger, 
+      npm install @nestjs/platform-express, 
+      npm install multer,  
+      npm install argon2, 
+      npm install @nestjs/config, 
+      npm install @prisma/client, 
 
 
 
